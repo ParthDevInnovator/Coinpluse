@@ -1,70 +1,21 @@
-import Datatable from '@/components/Datatable'
-import { cn } from '@/lib/utils';
-import { TrendingDown, TrendingUp } from 'lucide-react';
-import Image from 'next/image'
-import Link from 'next/link';
-const columns: DataTableColumn<TrendingCoin>[]=[
-  { 
-    header:'Price',
-    cellClassName:'price-cell',
-    cell:(coin)=>{
-      return coin.item.data.price;
-    }
-  },
-  {
-    header:'Name',
-    cellClassName:'name-cell',
-    cell:(coin)=>{
-      const item=coin.item;
-      return(
-        <Link href={`/coins/${item.id}`}>
-          <Image src={item.large} alt={item.name} width={36} height={36}/>
-          <p>{item.name} </p>
-        </Link>
-      )
-    }
-  },
-  {
-    header:'24h Change',
-    cellClassName:'name-cell',
-    cell:(coin)=>{
-      const item=coin.item;
-      const isTrendingUp=item.data.price_change_percentage_24h.usd>0;
-      return (
-        <div className={cn('price-change',isTrendingUp?'text-green-500':'text-red-500')}>
-           <p>
-            {isTrendingUp ? (
-              <TrendingUp width={16} height={16}/>
-            ):
-            <TrendingDown width={16} height={16}/>
-            }
-           </p>
-        </div>
-      )
-    }
-  }
-]
-const page = () => {
+import CoinOverview from '@/components/home/CoinOverview'
+import TrendingCoin from '@/components/home/TrendingCoin'
+import React, { Suspense } from 'react'
+
+const  page=() =>{
   return (
-     <main className='main-container'>
-      <section className="home-grid">
-        <div id="coin overview">
-          <div className='header pt-2'>
-            <Image   src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
-  alt="Bitcoin" width={56} height={56}/>
-        <div className='info'>
-        <p>Bitcoin /BTC</p>
-        <h1>$89,113.00 </h1>
-  </div>
-          </div>
-        </div>
-        <p>Trending Coins</p>
-        <Datatable columns={[{header:'Title'},{header:'Price'}]} data={[]}  />
-      </section>
+    <main className='main-container'>
+      <section className='home-grid'></section>
+      <Suspense fallback={<div>Loading Overview...</div>}>
+      <CoinOverview/>
+      </Suspense>
+      <Suspense fallback={<div>Loading trending...</div>}>
+           <TrendingCoin/>
+      </Suspense>
       <section className='w-full mt-7 space-y-4'>
-        <p>Categories</p> 
+        <p>Categories</p>
       </section>
-     </main>
+    </main>
   )
 }
 
